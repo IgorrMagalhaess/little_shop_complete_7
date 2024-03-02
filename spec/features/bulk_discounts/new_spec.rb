@@ -44,43 +44,43 @@ RSpec.describe "bulk discounts index" do
       @discount2 = BulkDiscount.create!(quantity: 20, percentage: 20, merchant_id: @merchant1.id)
       @discount3 = BulkDiscount.create!(quantity: 30, percentage: 30, merchant_id: @merchant1.id)
 
-      visit merchant_bulk_discounts_path(@merchant1)
+      visit new_merchant_bulk_discount_path(@merchant1)
    end
 
-   it 'can see all my bulk discounts' do
-      expect(page).to have_content(@discount1.id)
-      expect(page).to have_content(@discount2.id)
-      expect(page).to have_content(@discount3.id)
+   it 'has a form to fill in the attributes for the bulk discount' do
+      expect(page).to have_field("percentage")
+      expect(page).to have_field("quantity")
    end
 
-   it 'for each discount it shows their discount and quantity' do
-      within "#bulk-discount-#{@discount1.id}" do
-         expect(page).to have_content(@discount1.quantity)
-         expect(page).to have_content("10%")
-      end
+   it 'can fill in form, click submit and redirect to the bulk discount index' do
+      fill_in "percentage", with: 40
+      fill_in "quantity", with: 40
 
-      within "#bulk-discount-#{@discount2.id}" do
-         expect(page).to have_content(@discount2.quantity)
-         expect(page).to have_content("20%")
-      end
+      click_button "Submit"
 
-      within "#bulk-discount-#{@discount3.id}" do
-         expect(page).to have_content(@discount3.quantity)
-         expect(page).to have_content("30%")
-      end
+      expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
+      expect(page).to have_content("Min. Quantity: 40")
+      expect(page).to have_content("Percentage: 40%")
+      save_and_open_page
    end
 
-   it 'each bulk discount listed includes a link to its show page' do
-      expect(page).to have_link("#{@discount1.id}")
-      expect(page).to have_link("#{@discount2.id}")
-      expect(page).to have_link("#{@discount3.id}")
-   end
+   it 'can fill in form, click submit and redirect to the new bulk discount if info is missing' do
+      fill_in "percentage", with: 40
+      fill_in "quantity", with: " "
 
-   it 'has a link to create a new discount' do
-      expect(page).to have_link("Create New Bulk Discount")
-
-      click_link "Create New Bulk Discount"
+      click_button "Submit"
 
       expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
+      expect(page).to have_content("All fields must be completed. Quantity/Percentage can't be 0.")
+   end
+
+   it 'can fill in form, click submit and redirect to the new bulk discount if attributes are 0' do
+      fill_in "percentage", with: 0
+      fill_in "quantity", with: 0
+
+      click_button "Submit"
+
+      expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
+      expect(page).to have_content("All fields must be completed. Quantity/Percentage can't be 0.")
    end
 end
