@@ -16,4 +16,8 @@ RSpec.describe "bulk discounts index" do
       expect(page).to have_content("Min. Quantity: #{@discount1.quantity}")
       expect(page).to have_content("Percentage: 10%")
    end
+
+   it 'has a link to edit the bulk discount' do
+      expect(page).to have_content("Edit Bulk Discount ##{@discount1.id}")
+   end
 end

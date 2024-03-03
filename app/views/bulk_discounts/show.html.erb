@@ -7,4 +7,6 @@
 
    <p>Min. Quantity: <%= @bulk_discount.quantity %></p>
    <p>Percentage: <%= number_to_percentage(@bulk_discount.percentage, precision: 0) %></p>
+
+   <strong><%= link_to "Edit Bulk Discount ##{@bulk_discount.id}", edit_merchant_bulk_discount_path(@merchant, @bulk_discount) %></strong>
 </body>
