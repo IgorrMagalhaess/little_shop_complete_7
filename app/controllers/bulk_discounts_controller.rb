@@ -1,5 +1,5 @@
 class BulkDiscountsController < ApplicationController
-   before_action :find_merchant_and_discount, only: [:destroy, :show, :edit]
+   before_action :find_merchant_and_discount, only: [:destroy, :show, :edit, :update]
    before_action :find_merchant, only: [:index, :new, :create]
 
    def index
@@ -30,7 +30,16 @@ class BulkDiscountsController < ApplicationController
    end
 
    def edit
-      
+   end
+
+   def update
+      if @bulk_discount.update(bulk_discount_params)
+         flash.notice = "Succesfully Updated Bulk Discount Info!"
+         redirect_to merchant_bulk_discount_path(@merchant, @bulk_discount)
+      else
+         flash.notice = "All fields must be completed. Quantity/Percentage can't be 0."
+         redirect_to edit_merchant_bulk_discount_path(@merchant, @bulk_discount)
+      end
    end
 
    private
@@ -41,5 +50,9 @@ class BulkDiscountsController < ApplicationController
    def find_merchant_and_discount
       @merchant = Merchant.find(params[:merchant_id])
       @bulk_discount = BulkDiscount.find(params[:id])
+   end
+
+   def bulk_discount_params
+      params.require(:bulk_discount).permit(:percentage, :quantity, :merchant_id)
    end
 end
