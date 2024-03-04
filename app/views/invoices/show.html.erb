@@ -11,7 +11,8 @@
   <br>
 
   <p> Created on: <%= @invoice.created_at.strftime("%A, %B %-d, %Y") %></p>
-  <p>Total Revenue: <%= @invoice.total_revenue %></p>
+  <p>Total Revenue: <%= number_to_currency(@invoice.total_revenue) %></p>
+  <p>Total Revenue after Discounts: <%= number_to_currency(@invoice.total_revenue_with_discount) %></p>
 
 
   <h4>Customer:</h4>
@@ -32,14 +33,18 @@
     <tbody>
       <% @invoice.invoice_items.each do |i| %>
         <section id="the-status-<%= i.id %>">
-          <tr class="tr">
+          <tr id="ii-<%= i.id %>", class="tr">
             <td style="text-align:center"><%= i.item.name %></td>
             <td style="text-align:center"><%= i.quantity %></td>
-            <td style="text-align:center">$<%= i.unit_price %></td>
+            <td style="text-align:center"><%= number_to_currency(i.converted_price) %></td>
             <td style="text-align:center">
               <%= form_with model: @invoice, url: merchant_invoice_path(@merchant, @invoice), method: :patch, local: true do |f| %>
                 <%= f.select :status, Invoice.statuses.keys, selected: "#{@invoice.status}" %>
                 <%= f.submit 'Update Invoice' %>
+                <% bulk_discount = i.applied_discounts.max_by(&:percentage) %>
+                <% if bulk_discount %>
+                  <%= link_to "Applied Bulk Discount ##{bulk_discount.id}", merchant_bulk_discount_path(@merchant, bulk_discount) %>
+                <% end %>
               <% end %>
               </td>
           </tr>

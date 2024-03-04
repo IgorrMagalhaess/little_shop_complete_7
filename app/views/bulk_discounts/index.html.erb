@@ -1,0 +1,18 @@
+<%= render partial: "shared/nav" %>
+
+   <body>
+   <div class="row">
+      <p class='col-12'>My Bulk Discounts</p>
+   </div>
+
+   <%= link_to "Create New Bulk Discount", new_merchant_bulk_discount_path(@merchant) %>
+
+   <% @bulk_discounts.each do |discount| %>
+      <div id="bulk-discount-<%= discount.id %>">
+      <p><%= link_to "Discount ##{discount.id}", merchant_bulk_discount_path(@merchant, discount) %></p>
+      <p>Min. Quantity: <%= discount.quantity %></p>
+      <p>Percentage: <%= number_to_percentage(discount.percentage, precision: 0) %></p>
+      <strong><%= link_to "Delete", merchant_bulk_discount_path(@merchant, discount.id), method: :delete %></strong>
+      </div>
+   <% end %>
+</body>
