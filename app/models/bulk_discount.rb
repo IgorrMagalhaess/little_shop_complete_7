@@ -4,4 +4,9 @@ class BulkDiscount < ApplicationRecord
   validates :merchant_id, presence: true
 
   belongs_to :merchant
+  has_many :invoices, through: :merchant
+
+  def completed_invoices?
+    invoices.in_progress.empty?
+  end
 end

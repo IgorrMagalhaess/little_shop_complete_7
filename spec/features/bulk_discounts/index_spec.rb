@@ -31,6 +31,7 @@ RSpec.describe "bulk discounts index" do
       @ii_5 = InvoiceItem.create!(invoice_id: @invoice_4.id, item_id: @item_4.id, quantity: 1, unit_price: 5, status: 1)
       @ii_6 = InvoiceItem.create!(invoice_id: @invoice_5.id, item_id: @item_4.id, quantity: 1, unit_price: 5, status: 1)
       @ii_7 = InvoiceItem.create!(invoice_id: @invoice_6.id, item_id: @item_4.id, quantity: 1, unit_price: 5, status: 1)
+      @ii_8 = InvoiceItem.create!(invoice_id: @invoice_7.id, item_id: @item_1.id, quantity: 30, unit_price: 500, status: 1)
 
       @transaction1 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: @invoice_1.id)
       @transaction2 = Transaction.create!(credit_card_number: 230948, result: 1, invoice_id: @invoice_3.id)
@@ -92,11 +93,20 @@ RSpec.describe "bulk discounts index" do
       within "#bulk-discount-#{@discount2.id}" do
          expect(page).to have_link("Delete")
       end
+   end
 
+   it 'will not delete the discount if the bulk discount is being applied to a invoice with in progress status' do
       within "#bulk-discount-#{@discount3.id}" do
          expect(page).to have_link("Delete")
          click_link "Delete"
       end
+
       expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
+      expect(page).to have_content("Error: Unable to delete discount while applied to invoices in progress.")
+      
+      within "#bulk-discount-#{@discount3.id}" do
+         expect(page).to have_content(@discount3.quantity)
+         expect(page).to have_link("Delete")
+      end
    end
 end

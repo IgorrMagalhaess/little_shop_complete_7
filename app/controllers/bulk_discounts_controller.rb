@@ -25,8 +25,13 @@ class BulkDiscountsController < ApplicationController
    end
 
    def destroy
-      @bulk_discount.destroy
-      redirect_to merchant_bulk_discounts_path
+      if @bulk_discount.completed_invoices?
+         @bulk_discount.destroy
+         redirect_to merchant_bulk_discounts_path
+      else
+         flash.notice = "Error: Unable to delete discount while applied to invoices in progress."
+         redirect_to merchant_bulk_discounts_path(@merchant)
+      end
    end
 
    def edit
