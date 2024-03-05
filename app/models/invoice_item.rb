@@ -20,6 +20,6 @@ class InvoiceItem < ApplicationRecord
   end
 
   def applied_discounts
-    item.merchant.bulk_discounts.where("quantity <=?", quantity)  
+    item.merchant.bulk_discounts.where("quantity <=?", quantity)
   end
 end
