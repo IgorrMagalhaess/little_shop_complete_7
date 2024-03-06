@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe "bulk discounts index" do
    before :each do
       @merchant1 = Merchant.create!(name: "Hair Care")
+      @merchant2 = Merchant.create!(name: "Skin Care")
 
       @customer_1 = Customer.create!(first_name: "Joey", last_name: "Smith")
       @customer_2 = Customer.create!(first_name: "Cecilia", last_name: "Jones")
@@ -42,7 +43,7 @@ RSpec.describe "bulk discounts index" do
       @transaction7 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: @invoice_2.id)
 
       @discount1 = BulkDiscount.create!(quantity: 10, percentage: 10, merchant_id: @merchant1.id)
-      @discount2 = BulkDiscount.create!(quantity: 20, percentage: 20, merchant_id: @merchant1.id)
+      @discount2 = BulkDiscount.create!(quantity: 20, percentage: 20, merchant_id: @merchant2.id)
       @discount3 = BulkDiscount.create!(quantity: 30, percentage: 30, merchant_id: @merchant1.id)
 
       visit merchant_bulk_discounts_path(@merchant1)
@@ -50,7 +51,6 @@ RSpec.describe "bulk discounts index" do
 
    it 'can see all my bulk discounts' do
       expect(page).to have_content(@discount1.id)
-      expect(page).to have_content(@discount2.id)
       expect(page).to have_content(@discount3.id)
    end
 
@@ -58,11 +58,6 @@ RSpec.describe "bulk discounts index" do
       within "#bulk-discount-#{@discount1.id}" do
          expect(page).to have_content(@discount1.quantity)
          expect(page).to have_content("10%")
-      end
-
-      within "#bulk-discount-#{@discount2.id}" do
-         expect(page).to have_content(@discount2.quantity)
-         expect(page).to have_content("20%")
       end
 
       within "#bulk-discount-#{@discount3.id}" do
@@ -73,7 +68,6 @@ RSpec.describe "bulk discounts index" do
 
    it 'each bulk discount listed includes a link to its show page' do
       expect(page).to have_link("#{@discount1.id}")
-      expect(page).to have_link("#{@discount2.id}")
       expect(page).to have_link("#{@discount3.id}")
    end
 
@@ -90,9 +84,16 @@ RSpec.describe "bulk discounts index" do
          expect(page).to have_link("Delete")
       end
 
+      visit merchant_bulk_discounts_path(@merchant2)
+
       within "#bulk-discount-#{@discount2.id}" do
          expect(page).to have_link("Delete")
+
+         click_link "Delete"
       end
+
+      expect(current_path).to eq(merchant_bulk_discounts_path(@merchant2))
+      expect(page).to have_no_content(@discount2.quantity)
    end
 
    it 'will not delete the discount if the bulk discount is being applied to a invoice with in progress status' do
