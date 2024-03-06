@@ -42,7 +42,7 @@
                 <%= f.select :status, Invoice.statuses.keys, selected: "#{@invoice.status}" %>
                 <%= f.submit 'Update Invoice' %>
               <% end %>
-                <% bulk_discount = i.applied_discounts.max_by(&:percentage) %>
+                <% bulk_discount = i.applied_discounts %>
                 <% if bulk_discount %>
                   <%= link_to "Applied Bulk Discount ##{bulk_discount.id}", merchant_bulk_discount_path(@merchant, bulk_discount) %>
                 <% end %>
