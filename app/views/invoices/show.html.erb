@@ -41,11 +41,13 @@
               <%= form_with model: @invoice, url: merchant_invoice_path(@merchant, @invoice), method: :patch, local: true do |f| %>
                 <%= f.select :status, Invoice.statuses.keys, selected: "#{@invoice.status}" %>
                 <%= f.submit 'Update Invoice' %>
-              <% end %>
+                <% end %>
+                <td style="text-align:center">
                 <% bulk_discount = i.applied_discounts %>
                 <% if bulk_discount %>
                   <%= link_to "Applied Bulk Discount ##{bulk_discount.id}", merchant_bulk_discount_path(@merchant, bulk_discount) %>
                 <% end %>
+                </td>
               </td>
           </tr>
         </section>
