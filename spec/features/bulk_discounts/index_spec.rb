@@ -81,15 +81,15 @@ RSpec.describe "bulk discounts index" do
 
    it 'has a link to delete the discount next to each of them' do
       within "#bulk-discount-#{@discount1.id}" do
-         expect(page).to have_link("Delete")
+         expect(page).to have_button("Delete")
       end
 
       visit merchant_bulk_discounts_path(@merchant2)
 
       within "#bulk-discount-#{@discount2.id}" do
-         expect(page).to have_link("Delete")
+         expect(page).to have_button("Delete")
 
-         click_link "Delete"
+         click_button "Delete"
       end
 
       expect(current_path).to eq(merchant_bulk_discounts_path(@merchant2))
@@ -98,8 +98,8 @@ RSpec.describe "bulk discounts index" do
 
    it 'will not delete the discount if the bulk discount is being applied to a invoice with in progress status' do
       within "#bulk-discount-#{@discount3.id}" do
-         expect(page).to have_link("Delete")
-         click_link "Delete"
+         expect(page).to have_button("Delete")
+         click_button "Delete"
       end
 
       expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
@@ -107,7 +107,7 @@ RSpec.describe "bulk discounts index" do
       
       within "#bulk-discount-#{@discount3.id}" do
          expect(page).to have_content(@discount3.quantity)
-         expect(page).to have_link("Delete")
+         expect(page).to have_button("Delete")
       end
    end
 end

@@ -12,7 +12,7 @@
       <p><%= link_to "Discount ##{discount.id}", merchant_bulk_discount_path(@merchant, discount) %></p>
       <p>Min. Quantity: <%= discount.quantity %></p>
       <p>Percentage: <%= number_to_percentage(discount.percentage, precision: 0) %></p>
-      <%= link_to "Delete", merchant_bulk_discount_path(@merchant, discount.id), method: :delete %>
+      <%= button_to "Delete", merchant_bulk_discount_path(@merchant, discount.id), method: :delete %>
       </div>
    <% end %>
 </body>
